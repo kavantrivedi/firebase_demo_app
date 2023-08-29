@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebasedemo/modules/home/chat/chat_details_screen.dart';
 import 'package:firebasedemo/modules/home/chat/chat_listing_screen.dart';
 import 'package:firebasedemo/repository/fire_store_repository.dart';
+import 'package:firebasedemo/routes/route_models/routes_contants.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/user_model.dart';
+import '../../routes/route_models/chat_details_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,14 +19,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   UserModel loggedInUser = UserModel();
-  User? user = FirebaseAuth.instance.currentUser;
+  User? user;
   String selectedUserId = '';
   StreamController<List<UserModel>> userStream =
       StreamController<List<UserModel>>.broadcast();
 
   @override
   void initState() {
-    userStream.addStream(FireStoreRepository().fetchChatUser());
+    user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushReplacementNamed(context, RouteConstants.signInEmail);
+    }
     super.initState();
   }
 
@@ -34,21 +39,20 @@ class _HomeScreenState extends State<HomeScreen> {
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth > 500) {
           return StreamBuilder<List<UserModel>>(
-              stream: userStream.stream,
+              stream: FireStoreRepository().fetchChatUser(),
               builder: (context, snapshot) {
                 return Row(
                   children: [
                     chatStreamBuilder(
                         isMobileView: false,
-                        onTileTap: (index) async{
+                        onTileTap: (index) async {
                           selectedUserId = snapshot.data?[index].uid ?? '';
-                          setState(() {});
-                          debugPrint("selected UserId $selectedUserId");
-                          debugPrint('current user ${user?.uid}');
+                          debugPrint(' selected Uid form chat $selectedUserId');
                           FireStoreRepository().initializeChat(
-                            secondUserId: selectedUserId,
-                            userId: user?.uid ?? ''
-                          );
+                              secondUserId: selectedUserId,
+                              userId: user?.uid ?? '');
+                          debugPrint('current user Id ${user?.uid}');
+                          setState(() {});
                         }),
                     Expanded(
                       child: ChatDetailsScreen(
@@ -63,51 +67,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               });
         } else {
-          return chatStreamBuilder(
-              isMobileView: true,
-              onTileTap: (index) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChatDetailsScreen(
-                      secondUserId: selectedUserId,
-                        isMobileView: true,
-                        chatModel:
-                            FireStoreRepository().getChatModel(selectedUserId),
-                    userId: user?.uid ?? ''),
-                  ),
-                );
-              });
+          return StreamBuilder<List<UserModel>>(
+            stream: FireStoreRepository().fetchChatUser(),
+            builder: (context, snapshot) {
+              return chatStreamBuilder(
+                isMobileView: true,
+                onTileTap: (index) {
+                  FireStoreRepository().initializeChat(
+                      secondUserId: snapshot.data?[index].uid ?? '',
+                      userId: user?.uid ?? '');
+                  Navigator.pushReplacementNamed(
+                    context,
+                    RouteConstants.chatDetailsScreen,
+                    arguments: ChatDetailModel(
+                      chatModel:
+                          FireStoreRepository().getChatModel(selectedUserId),
+                      currentUser: user?.uid ?? '',
+                      secondUser: selectedUserId,
+                      isMobileView: true,
+                    ),
+                  );
+                },
+              );
+            },
+          );
         }
       }),
-
-      /*Center(
-        child: BlocBuilder<SignInBloc,AuthState>(
-          builder: (context,state) {
-            if(state is AuthSuccessState) {
-              return Column(
-              children: [
-                Text(state.displayName ?? ""),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(loggedInUser.userAddress ?? ""),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                    },
-                    child: const Text('Sign-out')),
-              ],
-            );
-            }else{
-              return const SizedBox.shrink();
-            }
-          }
-        ),
-      ),*/
     );
   }
 
@@ -117,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     final size = MediaQuery.sizeOf(context);
     return StreamBuilder<List<UserModel>>(
-        stream: userStream.stream,
+        stream: FireStoreRepository().fetchChatUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(
@@ -130,7 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
             if (snapshot.data == null) {
               return const SizedBox.shrink();
             }
-             snapshot.data!.removeWhere((element) => element.uid == user?.uid);
             return ChatListingScreen(
               isMobileView: isMobileView,
               userList: snapshot.data!,

@@ -1,15 +1,12 @@
-import 'package:firebasedemo/modules/home/home.dart';
 import 'package:firebasedemo/modules/sign-in/bloc/auth_event.dart';
 import 'package:firebasedemo/modules/sign-in/bloc/auth_state.dart';
 import 'package:firebasedemo/modules/sign-in/bloc/sign_in_bloc.dart';
 import 'package:firebasedemo/modules/sign-up/bloc/form_bloc.dart';
 import 'package:firebasedemo/modules/sign-up/bloc/form_event.dart';
 import 'package:firebasedemo/modules/sign-up/bloc/form_state.dart';
-import 'package:firebasedemo/modules/sign-up/sign_up.dart';
+import 'package:firebasedemo/routes/route_models/routes_contants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../auth_service.dart';
 
 class SignInWithEmail extends StatelessWidget {
   SignInWithEmail({super.key});
@@ -39,8 +36,8 @@ class SignInWithEmail extends StatelessWidget {
         BlocListener<SignInBloc, AuthState>(listener: (context, state) {
           if (state is AuthSuccessState) {
             debugPrint('Navigate to Home screen');
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
+            Navigator.of(context)
+                .pushReplacementNamed(RouteConstants.homeScreen);
           }
         }),
       ],
@@ -105,13 +102,16 @@ class SignInWithEmail extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () {
                             if (state.isFormValid) {
-                              context
-                                  .read<FormBloc>()
-                                  .add(FormSubmitted(false, () {
-                                    context
-                                        .read<SignInBloc>()
-                                        .add(AuthSuccessEvent());
-                                  }));
+                              context.read<FormBloc>().add(
+                                    FormSubmitted(
+                                      false,
+                                      () {
+                                        context
+                                            .read<SignInBloc>()
+                                            .add(AuthSuccessEvent());
+                                      },
+                                    ),
+                                  );
                             }
                           },
                           child: const Text(
@@ -121,45 +121,15 @@ class SignInWithEmail extends StatelessWidget {
                       ],
                     );
                   }),
-
-                  /*SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: TextFormField(
-                      controller: emailTextController,
-                      decoration: const InputDecoration(
-                        hintText: 'Email',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: TextFormField(
-                      controller: passwordTextController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        hintText: 'password',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),*/
                   const SizedBox(
                     height: 20,
                   ),
                   TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SignUpWithEmail(),
-                          ),
-                        );
-                      },
-                      child: const Text('Not register,Sign-up here'))
+                    onPressed: () {
+                      Navigator.pushNamed(context, RouteConstants.signUpEmail);
+                    },
+                    child: const Text('Not register, Sign-up here'),
+                  )
                 ],
               ),
             );
@@ -168,7 +138,7 @@ class SignInWithEmail extends StatelessWidget {
               children: [
                 SizedBox(
                   height: constraint.maxHeight,
-                  width: size.width * 0.5,
+                  width: size.width * 0.4,
                   child: Image.asset(
                       '/Users/kavan/StudioProjects/firebasedemo/images/signinscreen.jpeg',
                       fit: BoxFit.fitHeight),
@@ -232,60 +202,35 @@ class SignInWithEmail extends StatelessWidget {
                           ElevatedButton(
                             onPressed: () {
                               if (state.isFormValid) {
-                                context
-                                    .read<FormBloc>()
-                                    .add(FormSubmitted(false, () {
-                                      context
-                                          .read<SignInBloc>()
-                                          .add(AuthSuccessEvent());
-                                    }));
+                                context.read<FormBloc>().add(
+                                      FormSubmitted(
+                                        false,
+                                        () {
+                                          context
+                                              .read<SignInBloc>()
+                                              .add(AuthSuccessEvent());
+                                        },
+                                      ),
+                                    );
                               }
                             },
                             child: const Text(
                               'Sign in',
                             ),
                           ),
-                          const SizedBox(height: 100,)
+                          const SizedBox(
+                            height: 100,
+                          )
                         ],
                       );
                     }),
-
-                    /*SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: TextFormField(
-                        controller: emailTextController,
-                        decoration: const InputDecoration(
-                          hintText: 'Email',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: TextFormField(
-                        controller: passwordTextController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'password',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),*/
                     const SizedBox(
                       height: 20,
                     ),
                     TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const SignUpWithEmail(),
-                            ),
-                          );
+                          Navigator.pushNamed(
+                              context, RouteConstants.signUpEmail);
                         },
                         child: const Text('Not register,Sign-up here'))
                   ],
@@ -296,17 +241,6 @@ class SignInWithEmail extends StatelessWidget {
         }),
       ),
     );
-  }
-
-  void onSignIn(BuildContext context) async {
-    final message = await AuthService().login(
-      email: emailTextController.text,
-      password: passwordTextController.text,
-    );
-    if (message!.contains('Success')) {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()));
-    }
   }
 }
 

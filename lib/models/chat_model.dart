@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebasedemo/models/chat_meta_model.dart';
 import 'package:firebasedemo/repository/fire_store_repository.dart';
 
 
@@ -13,7 +14,7 @@ class ChatModel {
       required this.timestamp,
       this.message});
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'idFrom': idFrom,
       'timestamp': timestamp,

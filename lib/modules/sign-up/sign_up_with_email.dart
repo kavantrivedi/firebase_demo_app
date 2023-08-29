@@ -3,6 +3,7 @@ import 'package:firebasedemo/modules/sign-in/bloc/sign_in_bloc.dart';
 import 'package:firebasedemo/modules/sign-in/sign_in_with_email.dart';
 import 'package:firebasedemo/modules/sign-up/bloc/form_event.dart';
 import 'package:firebasedemo/modules/sign-up/bloc/form_state.dart';
+import 'package:firebasedemo/routes/route_models/routes_contants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,54 +32,35 @@ class _SignUpWithEmailState extends State<SignUpWithEmail> {
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 2,
-              child: EmailTextField(),
+              child: const EmailTextField(),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 2,
-              child: _PasswordField(),
+              child: const _PasswordField(),
             ),
             SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
-                child: NameTextField()),
+                child: const NameTextField()),
             const SizedBox(
               height: 20,
             ),
-            SignUpButton(),
+            const SignUpButton(),
             const SizedBox(
               height: 20,
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => SignInWithEmail(),
-                    ),
+                   RouteConstants.signInEmail
                   );
                 },
-                child: const Text('Already User,Sign-in here'))
+                child: const Text('Already User, Sign-in here'))
           ],
         ),
       ),
     );
   }
-
-/*
-  void onSignUp(BuildContext context) async {
-    final message = await AuthService().registration(
-      email: emailTextController.text,
-      password: passwordTextController.text,
-      userModel: UserModel(
-        userAddress: addressTextController.text,
-        userName: nameTextController.text,
-      ),
-    );
-    if (message!.contains('Success')) {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()));
-    }
-  }
-*/
 }
 class _PasswordField extends StatelessWidget {
   const _PasswordField({Key? key}) : super(key: key);
@@ -123,7 +105,7 @@ class NameTextField extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
           helperMaxLines: 2,
-          labelText: 'Name',
+          hintText: 'Name',
           errorMaxLines: 2,
           errorText: !state.isNameValid ? '''Name cannot be empty!''' : null,
         ),

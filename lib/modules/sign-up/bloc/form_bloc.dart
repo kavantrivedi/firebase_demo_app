@@ -1,6 +1,5 @@
 import 'package:firebasedemo/modules/sign-up/bloc/form_event.dart';
 import 'package:firebasedemo/modules/sign-up/bloc/form_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../models/user_model.dart';
@@ -9,7 +8,7 @@ import '../../auth_service.dart';
 class FormBloc extends Bloc<FormEvent, FormValidate> {
   FormBloc()
       : super(const FormValidate(
-            email: 'example@gmail.com',
+            email: '',
             password: '',
             isEmailValid: true,
             isPasswordValid: true,
@@ -29,16 +28,13 @@ class FormBloc extends Bloc<FormEvent, FormValidate> {
   final RegExp _emailRegExp = RegExp(
     r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
   );
-  final RegExp _passwordRegExp = RegExp(
-    r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$',
-  );
 
   bool _isEmailValid(String email) {
     return _emailRegExp.hasMatch(email);
   }
 
   bool _isPasswordValid(String password) {
-    return _passwordRegExp.hasMatch(password);
+    return true;
   }
 
   bool _isNameValid(String? displayName) {
@@ -92,6 +88,12 @@ class FormBloc extends Bloc<FormEvent, FormValidate> {
         );
         if (message!.contains('Success')) {
           event.onSuccessCall.call();
+        }else{
+          emit(state.copWith(
+              errorMessage: "Please enter valid Email and password",
+              isFormValid: _isPasswordValid(state.password) &&
+                  _isEmailValid(state.email),
+              isLoading: true));
         }
       } else {
         final message = await AuthService()
@@ -99,6 +101,12 @@ class FormBloc extends Bloc<FormEvent, FormValidate> {
         if (message!.contains('Success')) {
           event.onSuccessCall.call();
         }else{
+          emit(state.copWith(
+              errorMessage: "Please enter valid Email and password",
+              isFormValid: _isPasswordValid(state.password) &&
+                  _isEmailValid(state.email) ,
+              isLoading: true));
+
         }
         emit(
           state.copWith(

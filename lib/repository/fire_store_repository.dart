@@ -4,9 +4,11 @@ import 'package:firebasedemo/models/chat_model.dart';
 import 'package:firebasedemo/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../models/chat_meta_model.dart';
+
 class FireStoreRepository {
   static final FireStoreRepository _fireStoreRepository =
-      FireStoreRepository._internal();
+  FireStoreRepository._internal();
 
   factory FireStoreRepository() {
     return _fireStoreRepository;
@@ -14,7 +16,7 @@ class FireStoreRepository {
 
   Stream<List<UserModel>> fetchChatUser() {
     final querySnapShots =
-        FirebaseFirestore.instance.collection('users').snapshots();
+    FirebaseFirestore.instance.collection('users').snapshots();
     return querySnapShots.map((document) {
       final data = document.docs;
       return data.map((e) {
@@ -35,37 +37,35 @@ class FireStoreRepository {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .collection('chat')
+        .collection('chats')
         .doc(secondUserId)
         .set(secondUser);
 
     await FirebaseFirestore.instance
         .collection('users')
         .doc(secondUserId)
-        .collection('chat')
+        .collection('chats')
         .doc(userId)
         .set(currentUser);
   }
 
   void sendMessage(
-      {required ChatModel message,
-      required String userId,
-      required String secondUserId}) async {
-    FirebaseFirestore.instance
+      {required ChatModel message, required String secondUserId}) async {
+    await FirebaseFirestore.instance
         .collection('users')
-        .doc(userId)
-        .collection('chat')
+        .doc(message.idFrom)
+        .collection('chats')
         .doc(secondUserId)
         .collection('messages')
-        .add(message.toJson());
+        .add(message.toMap());
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(secondUserId)
-        .collection('chat')
-        .doc(userId)
+        .collection('chats')
+        .doc(message.idFrom)
         .collection('messages')
-        .add(message.toJson());
+        .add(message.toMap());
   }
 
   String? getCurrentUserId() {
@@ -81,33 +81,20 @@ class FireStoreRepository {
     );
   }
 
-  Stream<List<ChatModel>> getMessages(
-      ChatModel chatModel, String secondUserId) {
+  Stream<List<ChatModel>> getMessages(ChatModel chatModel,
+      String secondUserId) {
     debugPrint('get messages called');
 
     final users = FirebaseFirestore.instance
         .collection('users')
         .doc(chatModel.idFrom)
-        .collection('chat')
-        .doc(secondUserId).collection('messages').orderBy('timestamp').snapshots();
-
-    return users.map((document) {
-      final data = document.docs;
-      return data.map((e) {
-        final user = e.data();
-        debugPrint(' data from stream ${user.toString()}');
-        return  ChatModel.fromMap(user);
-      }).toList();
-    });
-    final chatDocument = FirebaseFirestore.instance
-        .collection('users')
-        .doc()
-        .collection('chat')
-        .doc()
-        .collection('message')
+        .collection('chats')
+        .doc(secondUserId)
+        .collection('messages')
+        .orderBy('timestamp')
         .snapshots();
 
-    return chatDocument.map((document) {
+    return users.map((document) {
       final data = document.docs;
       return data.map((e) {
         final user = e.data();

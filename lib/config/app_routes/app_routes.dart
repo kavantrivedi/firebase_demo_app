@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebasedemo/modules/home/home_screen.dart';
+import 'package:firebasedemo/modules/home/chat_list/chat_list.dart';
 import 'package:firebasedemo/modules/auth/sign-up/sign_up_with_email.dart';
+import 'package:firebasedemo/widgets/empty_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../modules/auth/sign-in/sign_in_with_email.dart';
 import '../../modules/splash/splash_screen.dart';
 import '../../widgets/error_view.dart';
+import '../../widgets/layouts/two_column_layout.dart';
 import 'route_observer.dart';
 import 'route_type.dart';
 
@@ -57,9 +59,9 @@ class AppRoutes {
       },
       routes: [
         ..._authRoutes,
-        ..._mobileRoutes,
-        //  if (columnMode) ..._tabletRoutes,
-        // if (!columnMode) ..._mobileRoutes,
+        // ..._mobileRoutes,
+        if (columnMode) ..._tabletRoutes,
+        if (!columnMode) ..._mobileRoutes,
       ],
       errorBuilder: (context, state) => const ErrorView(),
     );
@@ -97,10 +99,9 @@ class AppRoutes {
           path: RouteType.roomsScreen.url,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const HomeScreen(),
+            child: const ChatListScreen(),
             transitionsBuilder: _fadeTransition,
           ),
-          //  builder: (context, state) => const HomeScreen(),
         ),
 
         // stackedRoutes: [
@@ -126,6 +127,149 @@ class AppRoutes {
         //   //   widget: const NewGroup(),
         //   // ),
         // ],
+      ];
+
+  List<RouteBase> get _tabletRoutes => [
+        ShellRoute(
+          pageBuilder: (context, state, child) => CustomTransitionPage(
+            key: state.pageKey,
+            child: TwoColumnLayout(
+              mainView: const ChatListScreen(),
+              sideView: child,
+            ),
+            transitionsBuilder: _fadeTransition,
+          ),
+          // path: '/rooms',
+          routes: [
+            GoRoute(
+                path: RouteType.roomsScreen.url,
+                name: RouteType.roomsScreen.name,
+                pageBuilder: (context, state) => CustomTransitionPage(
+                      key: state.pageKey,
+                      child: const EmptyView(),
+                      transitionsBuilder: _fadeTransition,
+                    ),
+                routes: [
+                  // VWidget(
+                  //   path: '/newprivatechat',
+                  //   widget: const NewPrivateChat(),
+                  //   buildTransition: _fadeTransition,
+                  // ),
+                  // VWidget(
+                  //   path: '/newgroup',
+                  //   widget: const NewGroup(),
+                  //   buildTransition: _fadeTransition,
+                  // ),
+                  // VNester(
+                  //   path: ':roomid',
+                  //   widgetBuilder: (child) => SideViewLayout(
+                  //     mainView: const ChatPage(),
+                  //     sideView: child,
+                  //   ),
+                  //   buildTransition: _fadeTransition,
+                  //   nestedRoutes: [
+                  //     VWidget(
+                  //       path: '',
+                  //       widget: const ChatPage(),
+                  //       buildTransition: _fadeTransition,
+                  //     ),
+                  //     VWidget(
+                  //       path: 'details',
+                  //       widget: const ChatDetails(),
+                  //       buildTransition: _fadeTransition,
+                  //       stackedRoutes: _chatDetailsRoutes,
+                  //     ),
+                  //   ],
+                  // ),
+                ]),
+          ],
+        )
+
+        //       VNester(
+        //         path: '/rooms',
+        //         widgetBuilder: (child) => TwoColumnLayout(
+        //           mainView: const ChatList(),
+        //           sideView: child,
+        //         ),
+        //         buildTransition: _fadeTransition,
+        //         nestedRoutes: [
+        //           VWidget(
+        //             path: '',
+        //             widget: const EmptyPage(),
+        //             buildTransition: _fadeTransition,
+        //             stackedRoutes: [
+        //               VWidget(
+        //                 path: '/stories/create',
+        //                 buildTransition: _fadeTransition,
+        //                 widget: const AddStoryPage(),
+        //               ),
+        //               VWidget(
+        //                 path: '/stories/:roomid',
+        //                 buildTransition: _fadeTransition,
+        //                 widget: const StoryPage(),
+        //                 stackedRoutes: [
+        //                   VWidget(
+        //                     path: 'share',
+        //                     widget: const AddStoryPage(),
+        //                   ),
+        //                 ],
+        //               ),
+        //               VWidget(
+        //                 path: '/spaces/:roomid',
+        //                 widget: const ChatDetails(),
+        //                 buildTransition: _fadeTransition,
+        //                 stackedRoutes: _chatDetailsRoutes,
+        //               ),
+        //               VWidget(
+        //                 path: '/newprivatechat',
+        //                 widget: const NewPrivateChat(),
+        //                 buildTransition: _fadeTransition,
+        //               ),
+        //               VWidget(
+        //                 path: '/newgroup',
+        //                 widget: const NewGroup(),
+        //                 buildTransition: _fadeTransition,
+        //               ),
+        //               VWidget(
+        //                 path: '/newspace',
+        //                 widget: const NewSpace(),
+        //                 buildTransition: _fadeTransition,
+        //               ),
+        //               VNester(
+        //                 path: ':roomid',
+        //                 widgetBuilder: (child) => SideViewLayout(
+        //                   mainView: const ChatPage(),
+        //                   sideView: child,
+        //                 ),
+        //                 buildTransition: _fadeTransition,
+        //                 nestedRoutes: [
+        //                   VWidget(
+        //                     path: '',
+        //                     widget: const ChatPage(),
+        //                     buildTransition: _fadeTransition,
+        //                   ),
+        //                   VWidget(
+        //                     path: 'encryption',
+        //                     widget: const ChatEncryptionSettings(),
+        //                     buildTransition: _fadeTransition,
+        //                   ),
+        //                   VWidget(
+        //                     path: 'details',
+        //                     widget: const ChatDetails(),
+        //                     buildTransition: _fadeTransition,
+        //                     stackedRoutes: _chatDetailsRoutes,
+        //                   ),
+        //                   VWidget(
+        //                     path: 'invite',
+        //                     widget: const InvitationSelection(),
+        //                     buildTransition: _fadeTransition,
+        //                   ),
+        //                 ],
+        //               ),
+        //             ],
+        //           ),
+        //         ],
+        //       ),
       ];
 
   // List<VRouteElement> get _tabletRoutes => [

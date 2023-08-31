@@ -4,11 +4,9 @@ import 'package:firebasedemo/models/chat_model.dart';
 import 'package:firebasedemo/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../models/chat_meta_model.dart';
-
 class FireStoreRepository {
   static final FireStoreRepository _fireStoreRepository =
-  FireStoreRepository._internal();
+      FireStoreRepository._internal();
 
   factory FireStoreRepository() {
     return _fireStoreRepository;
@@ -16,7 +14,7 @@ class FireStoreRepository {
 
   Stream<List<UserModel>> fetchChatUser() {
     final querySnapShots =
-    FirebaseFirestore.instance.collection('users').snapshots();
+        FirebaseFirestore.instance.collection('users').snapshots();
     return querySnapShots.map((document) {
       final data = document.docs;
       return data.map((e) {
@@ -81,8 +79,8 @@ class FireStoreRepository {
     );
   }
 
-  Stream<List<ChatModel>> getMessages(ChatModel chatModel,
-      String secondUserId) {
+  Stream<List<ChatModel>> getMessages(
+      ChatModel chatModel, String secondUserId) {
     debugPrint('get messages called');
 
     final users = FirebaseFirestore.instance

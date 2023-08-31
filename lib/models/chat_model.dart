@@ -1,18 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebasedemo/models/chat_meta_model.dart';
 import 'package:firebasedemo/repository/fire_store_repository.dart';
-
-
 
 class ChatModel {
   final String idFrom;
   final Timestamp timestamp;
   final String? message;
 
-  ChatModel(
-      {required this.idFrom,
-      required this.timestamp,
-      this.message});
+  ChatModel({required this.idFrom, required this.timestamp, this.message});
 
   Map<String, dynamic> toMap() {
     return {
@@ -30,5 +24,5 @@ class ChatModel {
     );
   }
 
-  bool get isMyMessage  => idFrom == FireStoreRepository().getCurrentUserId();
+  bool get isMyMessage => idFrom == FireStoreRepository().getCurrentUserId();
 }

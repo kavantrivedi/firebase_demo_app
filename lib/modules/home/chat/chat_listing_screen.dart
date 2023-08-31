@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebasedemo/config/app_routes/app_routes.dart';
+import 'package:firebasedemo/config/app_routes/route_type.dart';
 import 'package:firebasedemo/models/user_model.dart';
 import 'package:firebasedemo/modules/home/chat/chat_tile.dart';
-import 'package:firebasedemo/routes/route_models/routes_contants.dart';
 import 'package:flutter/material.dart';
 
 class ChatListingScreen extends StatelessWidget {
@@ -47,11 +48,10 @@ class ChatListingScreen extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushReplacementNamed(
-                context, RouteConstants.signInEmail,
-              );
+            onPressed: () async {
+              FirebaseAuth.instance.signOut().then((value) {
+                AppRoutes.pushNamed(context, routeType: RouteType.splashScreen);
+              });
             },
             child: const Text('Logout'),
           ),

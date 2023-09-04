@@ -1,23 +1,24 @@
+import 'package:firebasedemo/models/chat_contact_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../config/app_config.dart';
 import '../../../config/app_themes.dart';
 import '../../../widgets/avatar_widget.dart';
 
-enum ArchivedRoomAction { delete, rejoin }
-
 class ChatListItem extends StatelessWidget {
-  //final Room room;
   final bool activeChat;
   final bool selected;
   final void Function()? onTap;
   final void Function()? onLongPress;
+  final ChatContactModel chatContactModel;
 
   const ChatListItem({
     this.activeChat = false,
     this.selected = false,
     this.onTap,
     this.onLongPress,
+    required this.chatContactModel,
     Key? key,
   }) : super(key: key);
 
@@ -29,7 +30,6 @@ class ChatListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const unreadBubbleSize = 0.0;
-    const displayname = "Abc";
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 8,
@@ -58,14 +58,14 @@ class ChatListItem extends StatelessWidget {
                   ),
                 )
               : Avatar(
-                  name: displayname,
+                  name: chatContactModel.name,
                   onTap: onLongPress,
                 ),
           title: Row(
             children: <Widget>[
               Expanded(
                 child: Text(
-                  displayname,
+                  chatContactModel.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -74,7 +74,7 @@ class ChatListItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(
-                  'time create', // room.timeCreated.localizedTimeShort(context),
+                  DateFormat.Hm().format(chatContactModel.timeSent),
                   style: TextStyle(
                     fontSize: 13,
                     color: Theme.of(context).textTheme.bodyMedium!.color,
@@ -86,32 +86,9 @@ class ChatListItem extends StatelessWidget {
           subtitle: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // if (typingText.isEmpty &&
-              //     ownMessage &&
-              //     room.lastEvent!.status.isSending) ...[
-              //   const SizedBox(
-              //     width: 16,
-              //     height: 16,
-              //     child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-              //   ),
-              //   const SizedBox(width: 4),
-              // ],
-              AnimatedContainer(
-                width: 18,
-                clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(),
-                duration: AppThemes.animationDuration,
-                curve: AppThemes.animationCurve,
-                padding: const EdgeInsets.only(right: 4),
-                child: Icon(
-                  Icons.edit_outlined,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 14,
-                ),
-              ),
               Expanded(
                   child: Text(
-                "typingText",
+                chatContactModel.lastMessage,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                 ),

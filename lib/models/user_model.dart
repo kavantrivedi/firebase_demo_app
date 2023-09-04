@@ -4,14 +4,16 @@ class UserModel {
   String? userName;
   String? userAddress;
   String? uid;
+  String? email;
 
-  UserModel({this.userName, this.userAddress, this.uid});
+  UserModel({this.userName, this.userAddress, this.uid, this.email});
 
   factory UserModel.fromMap(map) {
     return UserModel(
       userName: map['userName'],
       userAddress: map['userAddress'],
       uid: map['uid'],
+      email: map['email'],
     );
   }
 
@@ -20,6 +22,7 @@ class UserModel {
       userName: docSnap.get('name'),
       uid: docSnap.get('uid'),
       userAddress: docSnap.get('userAddress'),
+      email: docSnap.get('email'),
     );
   }
 
@@ -28,6 +31,7 @@ class UserModel {
       'userName': userName,
       'userAddress': userAddress,
       'uid': uid,
+      'email': email,
     };
   }
 }

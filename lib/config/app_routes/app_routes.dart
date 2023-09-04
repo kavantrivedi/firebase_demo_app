@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebasedemo/modules/home/chat_details/chat_details_screen.dart';
 import 'package:firebasedemo/modules/home/chat_list/chat_list.dart';
 import 'package:firebasedemo/modules/auth/sign-up/sign_up_with_email.dart';
 import 'package:firebasedemo/widgets/empty_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../modules/auth/sign-in/sign_in_with_email.dart';
+import '../../modules/home/new_chat/new_chat_screen.dart';
 import '../../modules/splash/splash_screen.dart';
 import '../../widgets/error_view.dart';
 import '../../widgets/layouts/two_column_layout.dart';
@@ -15,6 +17,9 @@ class AppRoutes {
   final bool columnMode;
 
   AppRoutes(this.columnMode);
+
+  final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
   static pushNamed(BuildContext context,
       {required RouteType routeType,
@@ -46,6 +51,7 @@ class AppRoutes {
 
   GoRouter getRoutes(String? initialRoute) {
     return GoRouter(
+      navigatorKey: _rootNavigatorKey,
       initialLocation: initialRoute ?? RouteType.splashScreen.url,
       debugLogDiagnostics: true,
       observers: [AppNavigatorObserver()],
@@ -59,7 +65,6 @@ class AppRoutes {
       },
       routes: [
         ..._authRoutes,
-        // ..._mobileRoutes,
         if (columnMode) ..._tabletRoutes,
         if (!columnMode) ..._mobileRoutes,
       ],
@@ -99,9 +104,33 @@ class AppRoutes {
           path: RouteType.roomsScreen.url,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const ChatListScreen(),
+            child: ChatListScreen(),
             transitionsBuilder: _fadeTransition,
           ),
+          routes: [
+            GoRoute(
+              name: RouteType.newChatScreen.name,
+              path: RouteType.newChatScreen.url,
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const NewChatScreen(),
+                transitionsBuilder: _fadeTransition,
+              ),
+            ),
+            GoRoute(
+              name: RouteType.chatDetailsScreen.name,
+              path: RouteType.chatDetailsScreen.url,
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: ChatDetailsScreen(
+                  uid: state.pathParameters['uid'] ?? '',
+                  name: state.uri.queryParameters['name'] ?? '',
+                  isGroupChat: state.uri.queryParameters['isGroupChat'] == "1",
+                ),
+                transitionsBuilder: _fadeTransition,
+              ),
+            ),
+          ],
         ),
 
         // stackedRoutes: [
@@ -131,10 +160,11 @@ class AppRoutes {
 
   List<RouteBase> get _tabletRoutes => [
         ShellRoute(
+          navigatorKey: _shellNavigatorKey,
           pageBuilder: (context, state, child) => CustomTransitionPage(
             key: state.pageKey,
             child: TwoColumnLayout(
-              mainView: const ChatListScreen(),
+              mainView: ChatListScreen(),
               sideView: child,
             ),
             transitionsBuilder: _fadeTransition,
@@ -150,11 +180,29 @@ class AppRoutes {
                       transitionsBuilder: _fadeTransition,
                     ),
                 routes: [
-                  // VWidget(
-                  //   path: '/newprivatechat',
-                  //   widget: const NewPrivateChat(),
-                  //   buildTransition: _fadeTransition,
-                  // ),
+                  GoRoute(
+                    name: RouteType.newChatScreen.name,
+                    path: RouteType.newChatScreen.url,
+                    pageBuilder: (context, state) => CustomTransitionPage(
+                      key: state.pageKey,
+                      child: const NewChatScreen(),
+                      transitionsBuilder: _fadeTransition,
+                    ),
+                  ),
+                  GoRoute(
+                    name: RouteType.chatDetailsScreen.name,
+                    path: RouteType.chatDetailsScreen.url,
+                    pageBuilder: (context, state) => CustomTransitionPage(
+                      key: state.pageKey,
+                      child: ChatDetailsScreen(
+                        uid: state.pathParameters['uid'] ?? '',
+                        name: state.uri.queryParameters['name'] ?? '',
+                        isGroupChat:
+                            state.uri.queryParameters['isGroupChat'] == "1",
+                      ),
+                      transitionsBuilder: _fadeTransition,
+                    ),
+                  ),
                   // VWidget(
                   //   path: '/newgroup',
                   //   widget: const NewGroup(),

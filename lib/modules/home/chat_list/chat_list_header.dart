@@ -1,10 +1,15 @@
 import 'package:firebasedemo/config/app_themes.dart';
 import 'package:flutter/material.dart';
 
-class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
-  //final ChatListController controller;
+import 'bloc/chat_list_event.dart';
 
-  const ChatListHeader({Key? key}) : super(key: key);
+class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
+  final ChatTabType chatTabType;
+
+  const ChatListHeader({
+    Key? key,
+    required this.chatTabType,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +17,8 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
       floating: true,
       pinned: AppThemes.isColumnMode(context),
       automaticallyImplyLeading: false,
-      title: const Text(
-        'Rooms',
+      title: Text(
+        chatTabType.name.toUpperCase(),
       ),
     );
   }

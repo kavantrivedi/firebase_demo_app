@@ -16,7 +16,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   }
 
   void _onSignUpStartedEvent(event, emit) async {
-    final userModel = UserModel(userName: event.name);
+    final userModel = UserModel(userName: event.name, email: event.email);
     final String? message = await authService.registration(
       email: event.email,
       password: event.password,

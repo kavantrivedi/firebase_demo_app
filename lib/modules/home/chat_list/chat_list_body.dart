@@ -1,20 +1,37 @@
 import 'package:animations/animations.dart';
+import 'package:firebasedemo/repository/fire_store_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../widgets/avatar_widget.dart';
+import '../../../config/app_routes/app_routes.dart';
+import '../../../config/app_routes/route_type.dart';
+import '../../../models/chat_contact_model.dart';
+import 'bloc/chat_list_event.dart';
 import 'chat_list_header.dart';
+import 'chat_list_item.dart';
 
 class ChatListViewBody extends StatelessWidget {
-  const ChatListViewBody({Key? key}) : super(key: key);
+  final ChatTabType chatTabType;
+
+  const ChatListViewBody({
+    Key? key,
+    required this.chatTabType,
+  }) : super(key: key);
+
+  void onChatClick(BuildContext context,
+      {required ChatContactModel chatContactModel}) {
+    AppRoutes.pushNamed(context,
+        routeType: RouteType.chatDetailsScreen,
+        pathParameters: {
+          'uid': chatContactModel.contactId
+        },
+        queryParameters: {
+          'name': chatContactModel.name,
+          'isGroupChat': "0",
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
-    const dummyChatCount = 4;
-    final titleColor =
-        Theme.of(context).textTheme.bodyLarge!.color!.withAlpha(100);
-    final subtitleColor =
-        Theme.of(context).textTheme.bodyLarge!.color!.withAlpha(50);
-
     return PageTransitionSwitcher(
       transitionBuilder: (
         Widget child,
@@ -29,139 +46,127 @@ class ChatListViewBody extends StatelessWidget {
           child: child,
         );
       },
-      child: StreamBuilder(
-        // key: ValueKey(
-        //   client.userID.toString() +
-        //       controller.activeFilter.toString() +
-        //       controller.activeSpaceId.toString(),
-        // ),
-        // stream: client.onSync.stream
-        //     .where((s) => s.hasRoomUpdate)
-        //     .rateLimit(const Duration(seconds: 1)),
-        builder: (context, _) {
-          return SafeArea(
-            child: CustomScrollView(
-              //   controller: controller.scrollController,
-              slivers: [
-                const ChatListHeader(),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Icon(
-                          CupertinoIcons.chat_bubble_2,
-                          size: 128,
-                          color: Theme.of(context).colorScheme.onInverseSurface,
-                        ),
-                      ),
-                    ],
+      child: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            ChatListHeader(
+              chatTabType: chatTabType,
+            ),
+            StreamBuilder<List<ChatContactModel>>(
+              stream: FireStoreRepository().getChatContacts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoading(context);
+                }
+
+                if (snapshot.hasData) {
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int i) {
+                        final chatContactModel = snapshot.data![i];
+                        return ChatListItem(
+                          chatContactModel: chatContactModel,
+                          key: Key(
+                              'chat_list_item_${chatContactModel.contactId}'),
+                          selected: false,
+                          onTap: () => onChatClick(context,
+                              chatContactModel: chatContactModel),
+                        );
+                      },
+                      childCount: snapshot.data?.length ?? 0,
+                    ),
+                  );
+                }
+
+                return _buildEmptyView(context);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyView(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Icon(
+              chatTabType == ChatTabType.messages
+                  ? CupertinoIcons.chat_bubble_2
+                  : CupertinoIcons.group,
+              size: 128,
+              color: Theme.of(context).colorScheme.onInverseSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoading(BuildContext context) {
+    const dummyChatCount = 4;
+    final titleColor =
+        Theme.of(context).textTheme.bodyLarge!.color!.withAlpha(100);
+    final subtitleColor =
+        Theme.of(context).textTheme.bodyLarge!.color!.withAlpha(50);
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, i) => Opacity(
+          opacity: (dummyChatCount - i) / dummyChatCount,
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: titleColor,
+              child: CircularProgressIndicator(
+                strokeWidth: 1,
+                color: Theme.of(context).textTheme.bodyLarge!.color,
+              ),
+            ),
+            title: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: titleColor,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
                   ),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, i) => Opacity(
-                      opacity: (dummyChatCount - i) / dummyChatCount,
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: titleColor,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1,
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
-                          ),
-                        ),
-                        title: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: titleColor,
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 36),
-                            Container(
-                              height: 14,
-                              width: 14,
-                              decoration: BoxDecoration(
-                                color: subtitleColor,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Container(
-                              height: 14,
-                              width: 14,
-                              decoration: BoxDecoration(
-                                color: subtitleColor,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                          ],
-                        ),
-                        subtitle: Container(
-                          decoration: BoxDecoration(
-                            color: subtitleColor,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          height: 12,
-                          margin: const EdgeInsets.only(right: 22),
-                        ),
-                      ),
-                    ),
-                    childCount: dummyChatCount,
+                const SizedBox(width: 36),
+                Container(
+                  height: 14,
+                  width: 14,
+                  decoration: BoxDecoration(
+                    color: subtitleColor,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  height: 14,
+                  width: 14,
+                  decoration: BoxDecoration(
+                    color: subtitleColor,
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ],
             ),
-          );
-        },
+            subtitle: Container(
+              decoration: BoxDecoration(
+                color: subtitleColor,
+                borderRadius: BorderRadius.circular(3),
+              ),
+              height: 12,
+              margin: const EdgeInsets.only(right: 22),
+            ),
+          ),
+        ),
+        childCount: dummyChatCount,
       ),
     );
   }
-}
-
-class _SearchItem extends StatelessWidget {
-  final String title;
-  final Uri? avatar;
-  final void Function() onPressed;
-
-  const _SearchItem({
-    required this.title,
-    this.avatar,
-    required this.onPressed,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-        onTap: onPressed,
-        child: SizedBox(
-          width: 84,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 8),
-              Avatar(
-                mxContent: avatar,
-                name: title,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  title,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
 }

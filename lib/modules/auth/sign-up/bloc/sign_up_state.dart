@@ -24,5 +24,5 @@ class SignUpFailureState extends SignUpState {
 
   SignUpFailureState({required this.message});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [message];
 }

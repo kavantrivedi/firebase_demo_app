@@ -17,9 +17,7 @@ class AuthFormEmailChanged extends AuthFormState {
   final bool isValid;
 
   @override
-  List<Object?> get props => [
-        isValid,
-      ];
+  List<Object?> get props => [isValid];
 }
 
 class AuthFormPasswordChanged extends AuthFormState {
@@ -30,9 +28,7 @@ class AuthFormPasswordChanged extends AuthFormState {
   final bool isValid;
 
   @override
-  List<Object?> get props => [
-        isValid,
-      ];
+  List<Object?> get props => [isValid];
 }
 
 class AuthFormNameChanged extends AuthFormState {

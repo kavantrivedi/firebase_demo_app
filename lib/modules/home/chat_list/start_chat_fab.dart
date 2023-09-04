@@ -1,45 +1,47 @@
+import 'package:firebasedemo/config/app_routes/app_routes.dart';
+import 'package:firebasedemo/config/app_routes/route_type.dart';
 import 'package:firebasedemo/config/app_themes.dart';
 import 'package:flutter/material.dart';
-import 'chat_list.dart';
+import 'bloc/chat_list_event.dart';
 
 class StartChatFloatingActionButton extends StatelessWidget {
-  final ActiveFilter activeFilter;
+  final ChatTabType chatTabType;
   final ValueNotifier<bool> scrolledToTop;
   final bool roomsIsEmpty;
 
   const StartChatFloatingActionButton({
     Key? key,
-    required this.activeFilter,
+    required this.chatTabType,
     required this.scrolledToTop,
     required this.roomsIsEmpty,
   }) : super(key: key);
 
   void _onPressed(BuildContext context) {
-    switch (activeFilter) {
-      case ActiveFilter.messages:
-        //VRouter.of(context).to('/newprivatechat');
+    switch (chatTabType) {
+      case ChatTabType.messages:
+        AppRoutes.pushNamed(context, routeType: RouteType.newChatScreen);
         break;
-      case ActiveFilter.groups:
+      case ChatTabType.groups:
         //VRouter.of(context).to('/newgroup');
         break;
     }
   }
 
   IconData get icon {
-    switch (activeFilter) {
-      case ActiveFilter.messages:
+    switch (chatTabType) {
+      case ChatTabType.messages:
         return Icons.add_outlined;
-      case ActiveFilter.groups:
+      case ChatTabType.groups:
         return Icons.group_add_outlined;
     }
   }
 
   String getLabel(BuildContext context) {
-    switch (activeFilter) {
-      case ActiveFilter.messages:
-        return 'newChat';
-      case ActiveFilter.groups:
-        return 'newGroup';
+    switch (chatTabType) {
+      case ChatTabType.messages:
+        return 'New Chat';
+      case ChatTabType.groups:
+        return 'New Group';
     }
   }
 

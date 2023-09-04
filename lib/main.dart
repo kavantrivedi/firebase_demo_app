@@ -3,6 +3,7 @@ import 'package:firebasedemo/config/app_themes.dart';
 import 'package:firebasedemo/modules/auth_service.dart';
 import 'package:firebasedemo/modules/auth/sign-in/bloc/sign_in_bloc.dart';
 import 'package:firebasedemo/modules/auth/bloc/auth_form_bloc.dart';
+import 'package:firebasedemo/modules/home/chat_list/bloc/chat_list_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,9 @@ void main() async {
       ),
       BlocProvider(
         create: (context) => SignUpBloc(AuthService()),
+      ),
+      BlocProvider(
+        create: (context) => ChatListBloc(),
       ),
       BlocProvider(
         create: (context) => AuthFormBloc(),

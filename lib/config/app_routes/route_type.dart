@@ -3,6 +3,8 @@ enum RouteType {
   loginScreen,
   register,
   roomsScreen,
+  newChatScreen,
+  chatDetailsScreen,
 }
 
 extension ExtRouteType on RouteType {
@@ -16,6 +18,10 @@ extension ExtRouteType on RouteType {
         return '/register';
       case RouteType.roomsScreen:
         return '/rooms';
+      case RouteType.newChatScreen:
+        return 'new-chat';
+      case RouteType.chatDetailsScreen:
+        return 'chat-details/:uid';
     }
   }
 
@@ -29,6 +35,10 @@ extension ExtRouteType on RouteType {
         return 'register';
       case RouteType.roomsScreen:
         return 'rooms';
+      case RouteType.newChatScreen:
+        return 'new-chat';
+      case RouteType.chatDetailsScreen:
+        return 'chat-details';
     }
   }
 }

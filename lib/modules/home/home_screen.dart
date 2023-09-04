@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebasedemo/modules/home/chat/chat_details_screen.dart';
 import 'package:firebasedemo/modules/home/chat/chat_listing_screen.dart';
 import 'package:firebasedemo/repository/fire_store_repository.dart';
 import 'package:firebasedemo/routes/route_models/routes_contants.dart';
@@ -54,15 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           debugPrint('current user Id ${user?.uid}');
                           setState(() {});
                         }),
-                    Expanded(
-                      child: ChatDetailsScreen(
-                        secondUserId: selectedUserId,
-                        isMobileView: false,
-                        chatModel:
-                            FireStoreRepository().getChatModel(selectedUserId),
-                        userId: user?.uid ?? '',
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: ChatDetailsScreen(
+                    //     secondUserId: selectedUserId,
+                    //     isMobileView: false,
+                    //     chatModel:
+                    //         FireStoreRepository().getChatModel(selectedUserId),
+                    //     userId: user?.uid ?? '',
+                    //   ),
+                    // ),
                   ],
                 );
               });

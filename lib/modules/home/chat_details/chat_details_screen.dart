@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'widgets/bottom_chat_field.dart';
-import 'widgets/chat_list.dart';
+import 'widgets/chat_details_list.dart';
 
 class ChatDetailsScreen extends StatelessWidget {
   final String name;

@@ -1,4 +1,5 @@
 import 'package:firebasedemo/models/chat_contact_model.dart';
+import 'package:firebasedemo/models/group_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,14 +12,16 @@ class ChatListItem extends StatelessWidget {
   final bool selected;
   final void Function()? onTap;
   final void Function()? onLongPress;
-  final ChatContactModel chatContactModel;
+  final ChatContactModel? chatContactModel;
+  final GroupModel? groupModel;
 
   const ChatListItem({
     this.activeChat = false,
     this.selected = false,
     this.onTap,
     this.onLongPress,
-    required this.chatContactModel,
+    this.chatContactModel,
+    this.groupModel,
     Key? key,
   }) : super(key: key);
 
@@ -58,14 +61,14 @@ class ChatListItem extends StatelessWidget {
                   ),
                 )
               : Avatar(
-                  name: chatContactModel.name,
+                  name: chatContactModel?.name ?? groupModel?.name ?? '',
                   onTap: onLongPress,
                 ),
           title: Row(
             children: <Widget>[
               Expanded(
                 child: Text(
-                  chatContactModel.name,
+                  chatContactModel?.name ?? groupModel?.name ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -74,7 +77,9 @@ class ChatListItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(
-                  DateFormat.Hm().format(chatContactModel.timeSent),
+                  DateFormat.Hm().format(chatContactModel?.timeSent ??
+                      groupModel?.timeSent ??
+                      DateTime.now()),
                   style: TextStyle(
                     fontSize: 13,
                     color: Theme.of(context).textTheme.bodyMedium!.color,
@@ -88,7 +93,7 @@ class ChatListItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                   child: Text(
-                chatContactModel.lastMessage,
+                chatContactModel?.lastMessage ?? groupModel?.lastMessage ?? '',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                 ),

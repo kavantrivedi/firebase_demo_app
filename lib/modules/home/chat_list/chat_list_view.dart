@@ -6,6 +6,7 @@ import 'package:firebasedemo/config/app_themes.dart';
 import 'package:firebasedemo/modules/home/chat_list/bloc/chat_list_bloc.dart';
 import 'package:firebasedemo/modules/home/chat_list/bloc/chat_list_event.dart';
 import 'package:firebasedemo/modules/home/chat_list/bloc/chat_list_state.dart';
+import 'package:firebasedemo/resources/string_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
@@ -112,11 +113,12 @@ class ChatListView extends StatelessWidget {
                         curve: AppThemes.animationCurve,
                         clipBehavior: Clip.none,
                         child: FloatingActionButton.extended(
+                          heroTag: 'logout',
                           key: const ValueKey('logout'),
                           onPressed: () => logoutAction(context),
                           icon: const Icon(Icons.logout),
-                          label: const Text(
-                            'Logout',
+                          label: Text(
+                            StringManager.logout,
                             overflow: TextOverflow.fade,
                           ),
                         ),
@@ -142,10 +144,10 @@ class ChatListView extends StatelessWidget {
     if (await showOkCancelAlertDialog(
           useRootNavigator: false,
           context: context,
-          title: 'Are you sure you want to log out?',
+          title: StringManager.areYouSureYouWantToLogout,
           isDestructiveAction: false,
-          okLabel: 'Logout',
-          cancelLabel: 'Cancel',
+          okLabel: StringManager.logout,
+          cancelLabel: StringManager.cancel,
         ) ==
         OkCancelResult.cancel) {
       return;

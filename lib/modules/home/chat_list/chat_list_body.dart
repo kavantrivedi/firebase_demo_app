@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:firebasedemo/models/group_model.dart';
 import 'package:firebasedemo/repository/fire_store_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,18 @@ class ChatListViewBody extends StatelessWidget {
         });
   }
 
+  void onGroupClick(BuildContext context, {required GroupModel groupModel}) {
+    AppRoutes.pushNamed(context,
+        routeType: RouteType.chatDetailsScreen,
+        pathParameters: {
+          'uid': groupModel.groupId
+        },
+        queryParameters: {
+          'name': groupModel.name,
+          'isGroupChat': "1",
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageTransitionSwitcher(
@@ -52,38 +65,81 @@ class ChatListViewBody extends StatelessWidget {
             ChatListHeader(
               chatTabType: chatTabType,
             ),
-            StreamBuilder<List<ChatContactModel>>(
-              stream: FireStoreRepository().getChatContacts(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return _buildLoading(context);
-                }
-
-                if (snapshot.hasData) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int i) {
-                        final chatContactModel = snapshot.data![i];
-                        return ChatListItem(
-                          chatContactModel: chatContactModel,
-                          key: Key(
-                              'chat_list_item_${chatContactModel.contactId}'),
-                          selected: false,
-                          onTap: () => onChatClick(context,
-                              chatContactModel: chatContactModel),
-                        );
-                      },
-                      childCount: snapshot.data?.length ?? 0,
-                    ),
-                  );
-                }
-
-                return _buildEmptyView(context);
-              },
-            )
+            chatTabType == ChatTabType.messages
+                ? _build1to1MessageStream()
+                : _buildGroupMessagesStream(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildGroupMessagesStream() {
+    return StreamBuilder<List<GroupModel>>(
+      stream: FireStoreRepository().getAllGroupStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoading(context);
+        }
+
+        if (snapshot.hasData) {
+          if ((snapshot.data?.length ?? 0) == 0) {
+            return _buildEmptyView(context);
+          }
+
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int i) {
+                final groupModel = snapshot.data![i];
+                return ChatListItem(
+                  groupModel: groupModel,
+                  key: Key('chat_list_item_${groupModel.groupId}'),
+                  selected: false,
+                  onTap: () => onGroupClick(context, groupModel: groupModel),
+                );
+              },
+              childCount: snapshot.data?.length ?? 0,
+            ),
+          );
+        }
+
+        return _buildEmptyView(context);
+      },
+    );
+  }
+
+  Widget _build1to1MessageStream() {
+    return StreamBuilder<List<ChatContactModel>>(
+      stream: FireStoreRepository().getChatContacts(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoading(context);
+        }
+
+        if (snapshot.hasData) {
+          if ((snapshot.data?.length ?? 0) == 0) {
+            return _buildEmptyView(context);
+          }
+
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int i) {
+                final chatContactModel = snapshot.data![i];
+                return ChatListItem(
+                  chatContactModel: chatContactModel,
+                  key: Key('chat_list_item_${chatContactModel.contactId}'),
+                  selected: false,
+                  onTap: () =>
+                      onChatClick(context, chatContactModel: chatContactModel),
+                );
+              },
+              childCount: snapshot.data?.length ?? 0,
+            ),
+          );
+        }
+
+        return _buildEmptyView(context);
+      },
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:firebasedemo/modules/auth_service.dart';
 import 'package:firebasedemo/modules/auth/sign-in/bloc/sign_in_bloc.dart';
 import 'package:firebasedemo/modules/auth/bloc/auth_form_bloc.dart';
 import 'package:firebasedemo/modules/home/chat_list/bloc/chat_list_bloc.dart';
+import 'package:firebasedemo/modules/home/group/bloc/create_group_repo.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'config/app_config.dart';
 import 'config/app_routes/app_routes.dart';
 import 'firebase_options.dart';
 import 'modules/auth/sign-up/bloc/sign_up_bloc.dart';
+import 'modules/home/group/bloc/create_group_bloc.dart';
 import 'utils/custom_scroll_behaviour.dart';
 
 void main() async {
@@ -33,6 +35,9 @@ void main() async {
       ),
       BlocProvider(
         create: (context) => AuthFormBloc(),
+      ),
+      BlocProvider(
+        create: (context) => CreateGroupBloc(CreateGroupRepo()),
       ),
     ],
     child: const SimformChatApp(),

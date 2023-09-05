@@ -8,20 +8,20 @@ import '../../../../repository/fire_store_repository.dart';
 import 'my_message_card.dart';
 import 'sender_message_card.dart';
 
-class ChatList extends StatefulWidget {
+class ChatDetailsList extends StatefulWidget {
   final String recieverUserId;
   final bool isGroupChat;
-  const ChatList({
+  const ChatDetailsList({
     Key? key,
     required this.recieverUserId,
     required this.isGroupChat,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ChatListState();
+  State<StatefulWidget> createState() => _ChatDetailsListState();
 }
 
-class _ChatListState extends State<ChatList> {
+class _ChatDetailsListState extends State<ChatDetailsList> {
   final ScrollController messageController = ScrollController();
 
   @override

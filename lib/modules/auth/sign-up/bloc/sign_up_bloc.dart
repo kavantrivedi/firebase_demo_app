@@ -25,13 +25,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     if (message?.contains("Success") ?? false) {
       User? user = FirebaseAuth.instance.currentUser;
-      var loggedInUser = UserModel();
+
       if (user?.uid != null) {
         final value = await FirebaseFirestore.instance
             .collection("users")
             .doc(user!.uid)
             .get();
-        loggedInUser = UserModel.fromMap(value.data());
+        final loggedInUser = UserModel.fromMap(value.data());
         emit(SignUpSuccessState(displayName: loggedInUser.userName));
       } else {
         emit(SignUpFailureState(message: 'User doesn\'t exist'));

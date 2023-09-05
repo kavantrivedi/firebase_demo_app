@@ -22,7 +22,7 @@ class StartChatFloatingActionButton extends StatelessWidget {
         AppRoutes.pushNamed(context, routeType: RouteType.newChatScreen);
         break;
       case ChatTabType.groups:
-        //VRouter.of(context).to('/newgroup');
+        AppRoutes.pushNamed(context, routeType: RouteType.createGroupScreen);
         break;
     }
   }

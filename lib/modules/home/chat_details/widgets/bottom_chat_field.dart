@@ -26,14 +26,16 @@ class _BottomChatFieldState extends State<BottomChatField> {
   }
 
   void sendTextMessage() async {
-    FireStoreRepository().sendTextMessage(
-      text: _messageController.text.trim(),
-      recieverUserId: widget.recieverUserId,
-      isGroupChat: widget.isGroupChat,
-    );
-    setState(() {
-      _messageController.text = '';
-    });
+    if (_messageController.text.trim().isNotEmpty) {
+      FireStoreRepository().sendTextMessage(
+        text: _messageController.text.trim(),
+        recieverUserId: widget.recieverUserId,
+        isGroupChat: widget.isGroupChat,
+      );
+      setState(() {
+        _messageController.text = '';
+      });
+    }
   }
 
   @override

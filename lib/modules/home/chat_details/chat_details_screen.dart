@@ -25,7 +25,7 @@ class ChatDetailsScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ChatList(
+            child: ChatDetailsList(
               recieverUserId: uid,
               isGroupChat: isGroupChat,
             ),

@@ -47,12 +47,7 @@ class SignInWithEmail extends StatelessWidget {
           }
 
           if (state is SignInFailureState) {
-            showDialog(
-              context: context,
-              builder: (context) => ErrorDialog(
-                errorMessage: state.message,
-              ),
-            );
+            ErrorDialog.show(context, errorMessage: state.message);
           }
         }),
       ],

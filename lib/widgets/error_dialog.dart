@@ -5,6 +5,15 @@ class ErrorDialog extends StatelessWidget {
 
   const ErrorDialog({Key? key, required this.errorMessage}) : super(key: key);
 
+  static show(BuildContext context, {required String errorMessage}) {
+    showDialog(
+      context: context,
+      builder: (context) => ErrorDialog(
+        errorMessage: errorMessage,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

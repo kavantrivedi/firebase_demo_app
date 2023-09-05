@@ -5,6 +5,7 @@ enum RouteType {
   roomsScreen,
   newChatScreen,
   chatDetailsScreen,
+  createGroupScreen,
 }
 
 extension ExtRouteType on RouteType {
@@ -22,6 +23,8 @@ extension ExtRouteType on RouteType {
         return 'new-chat';
       case RouteType.chatDetailsScreen:
         return 'chat-details/:uid';
+      case RouteType.createGroupScreen:
+        return 'create-group';
     }
   }
 
@@ -39,6 +42,8 @@ extension ExtRouteType on RouteType {
         return 'new-chat';
       case RouteType.chatDetailsScreen:
         return 'chat-details';
+      case RouteType.createGroupScreen:
+        return 'create-group';
     }
   }
 }

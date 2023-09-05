@@ -64,7 +64,7 @@ class AuthService {
   }) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = FirebaseAuth.instance.currentUser;
-    userModel.uid = user?.uid;
+    userModel = userModel.copyWith(uid: user?.uid);
     await firebaseFirestore
         .collection("users")
         .doc(user!.uid)

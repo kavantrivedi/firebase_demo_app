@@ -16,6 +16,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   }
 
   void _onSignUpStartedEvent(event, emit) async {
+    emit(SignUpLoadingState());
     final userModel = UserModel(userName: event.name, email: event.email);
     final String? message = await authService.registration(
       email: event.email,
@@ -23,7 +24,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       userModel: userModel,
     );
 
-    if (message?.contains("Success") ?? false) {
+    if (message == null) {
       User? user = FirebaseAuth.instance.currentUser;
 
       if (user?.uid != null) {
@@ -37,7 +38,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         emit(SignUpFailureState(message: 'User doesn\'t exist'));
       }
     } else {
-      emit(SignUpFailureState(message: message ?? ''));
+      emit(SignUpFailureState(message: message));
     }
   }
 }

@@ -21,7 +21,7 @@ class AuthService {
               )
             },
           );
-      return 'Success';
+      return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         return 'The password provided is too weak.';
@@ -45,7 +45,7 @@ class AuthService {
         password: password,
       );
 
-      return 'Success';
+      return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         return 'No user found for that email.';

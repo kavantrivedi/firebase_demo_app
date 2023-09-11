@@ -111,7 +111,11 @@ class FireStoreRepository {
   }
 
   Stream<List<GroupModel>> getAllGroupStream() {
-    return firestore.collection('groups').snapshots().map((event) {
+    return firestore
+        .collection('groups')
+        .where("membersUid", arrayContains: getCurrentUserId())
+        .snapshots()
+        .map((event) {
       List<GroupModel> groups = [];
       for (var document in event.docs) {
         groups.add(GroupModel.fromMap(document.data()));

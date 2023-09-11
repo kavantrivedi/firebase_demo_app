@@ -45,9 +45,9 @@ void main() async {
 }
 
 class SimformChatApp extends StatefulWidget {
+  const SimformChatApp({super.key});
   static GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
-  const SimformChatApp({super.key});
 
   @override
   State<SimformChatApp> createState() => _SimformChatAppState();
@@ -55,7 +55,6 @@ class SimformChatApp extends StatefulWidget {
 
 class _SimformChatAppState extends State<SimformChatApp> {
   bool? columnMode;
-  String? _initialUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -63,21 +62,14 @@ class _SimformChatAppState extends State<SimformChatApp> {
       builder: (context, constraints) {
         final isColumnMode =
             AppThemes.isColumnModeByWidth(constraints.maxWidth);
-
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   if (isColumnMode != columnMode) {
-        //     if (SimformChatApp.rootNavigatorKey.currentContext != null) {
-        //       setState(() {
-        //         columnMode = isColumnMode;
-        //         _initialUrl = GoRouterState.of(
-        //                 SimformChatApp.rootNavigatorKey.currentContext!)
-        //             .path
-        //             .toString();
-        //         SimformChatApp.rootNavigatorKey = GlobalKey<NavigatorState>();
-        //       });
-        //     }
-        //   }
-        // });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (isColumnMode != columnMode) {
+            setState(() {
+              columnMode = isColumnMode;
+              SimformChatApp.rootNavigatorKey = GlobalKey<NavigatorState>();
+            });
+          }
+        });
 
         return MaterialApp.router(
           key: SimformChatApp.rootNavigatorKey,
@@ -93,7 +85,7 @@ class _SimformChatAppState extends State<SimformChatApp> {
             AppConfig.primaryColor,
           ),
           scrollBehavior: CustomScrollBehavior(),
-          routerConfig: AppRoutes(isColumnMode).getRoutes(_initialUrl),
+          routerConfig: AppRoutes(columnMode: isColumnMode).getRoutes(),
         );
       },
     );

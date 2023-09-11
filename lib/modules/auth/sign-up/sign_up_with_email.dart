@@ -140,18 +140,23 @@ class SignUpWithEmail extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              onPressed: () {
-                ctx.read<AuthFormBloc>().add(
-                      FormSubmitted(
-                        isSignUp: true,
-                        email: emailTextController.text.trim(),
-                        password: passwordTextController.text.trim(),
-                        name: nameTextController.text.trim(),
-                      ),
-                    );
-              },
-              child: const Text('Sign Up'),
+            BlocBuilder<SignUpBloc, SignUpState>(
+              builder: (context, signInState) => signInState
+                      is SignUpLoadingState
+                  ? const LinearProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: () {
+                        ctx.read<AuthFormBloc>().add(
+                              FormSubmitted(
+                                isSignUp: true,
+                                email: emailTextController.text.trim(),
+                                password: passwordTextController.text.trim(),
+                                name: nameTextController.text.trim(),
+                              ),
+                            );
+                      },
+                      child: const Text('Sign Up'),
+                    ),
             ),
             const SizedBox(
               height: 20,

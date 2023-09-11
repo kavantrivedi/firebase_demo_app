@@ -10,6 +10,11 @@ class SignInInitState extends SignInState {
   List<Object?> get props => [];
 }
 
+class SignInLoadingState extends SignInState {
+  @override
+  List<Object?> get props => [];
+}
+
 class SignInSuccessState extends SignInState {
   final String? displayName;
 

@@ -2,7 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebasedemo/modules/auth_service.dart';
-import 'package:firebasedemo/modules/auth/sign-in/bloc/sing_in_event.dart';
+import 'package:firebasedemo/modules/auth/sign-in/bloc/sign_in_event.dart';
 import 'package:firebasedemo/modules/auth/sign-in/bloc/sign_in_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,10 +16,11 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   }
 
   void _onSignInStartedEvent(event, emit) async {
+    emit(SignInLoadingState());
     final String? message =
         await authService.login(email: event.email, password: event.password);
 
-    if (message?.contains("Success") ?? false) {
+    if (message == null) {
       User? user = FirebaseAuth.instance.currentUser;
       if (user?.uid != null) {
         final value = await FirebaseFirestore.instance
@@ -32,7 +33,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         emit(SignInFailureState(message: 'User doesn\'t exist'));
       }
     } else {
-      emit(SignInFailureState(message: message ?? ''));
+      emit(SignInFailureState(message: message));
     }
   }
 }

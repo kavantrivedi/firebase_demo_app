@@ -17,9 +17,11 @@ import 'route_type.dart';
 class AppRoutes {
   final bool columnMode;
 
-  AppRoutes(this.columnMode);
+  AppRoutes({required this.columnMode});
 
-  final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static String? previousRoute;
+  static GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>();
   final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
   static pushNamed(BuildContext context,
@@ -50,13 +52,15 @@ class AppRoutes {
   // static Function(dynamic, dynamic, dynamic)? get _dynamicTransition =>
   //     columnMode ? _fadeTransition : null;
 
-  GoRouter getRoutes(String? initialRoute) {
+  GoRouter getRoutes() {
     return GoRouter(
-      navigatorKey: _rootNavigatorKey,
-      initialLocation: initialRoute ?? RouteType.splashScreen.url,
+      navigatorKey: rootNavigatorKey,
+      initialLocation: previousRoute ?? RouteType.splashScreen.url,
       debugLogDiagnostics: true,
       observers: [AppNavigatorObserver()],
       redirect: (context, state) {
+        previousRoute = state.matchedLocation +
+            (state.uri.query.isNotEmpty ? "?${state.uri.query}" : "");
         final userDetails = FirebaseAuth.instance.currentUser;
         if (userDetails == null &&
             state.matchedLocation != RouteType.register.url) {

@@ -8,6 +8,12 @@ class StringManager {
   static String get cancel => 'Cancel';
 
   // Authentication
+  static String get email => "Email";
+  static String get password => "Password";
+  static String get dontHaveAnAccout => "Don't have an account? sign-up here";
+  static String get welcomeback => "Welcome back!!";
+  static String get plzEnsureTheEmailEnteredIsValid =>
+      'Please ensure the email entered is valid';
   static String get validEmailMessage => "Please enter valid email.";
   static String get validPasswordMessage => "Please enter valid password.";
   static String get validNameMessage => "Please enter valid name.";
